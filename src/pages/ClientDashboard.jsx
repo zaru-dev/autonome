@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // <--- IMPORTANTE: Importamos o hook de navegação
 import { 
   Search, MapPin, Star, Filter, Heart, 
   CheckCircle, MessageSquare, Wrench, Zap, Paintbrush, Droplet 
 } from 'lucide-react';
 
-// Dados fictícios para simular o banco de dados
 const MOCK_PROFESSIONALS = [
   {
     id: 1,
@@ -74,10 +74,10 @@ const MOCK_PROFESSIONALS = [
 ];
 
 const ClientDashboard = () => {
+  const navigate = useNavigate(); // <--- ATIVAMOS A NAVEGAÇÃO
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
-  // Filtra os profissionais com base na busca
   const filteredPros = MOCK_PROFESSIONALS.filter(pro => 
     (selectedCategory === "Todos" || pro.service.includes(selectedCategory)) &&
     (pro.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -92,10 +92,15 @@ const ClientDashboard = () => {
     { name: "Pintor", icon: <Paintbrush size={18} /> },
   ];
 
+  // Função para ir para o perfil
+  const handleViewProfile = (id) => {
+    navigate(`/profile/${id}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       
-      {/* --- HEADER AZUL (Busca) --- */}
+      {/* Header */}
       <div className="bg-primary px-4 pt-8 pb-12 rounded-b-[2.5rem] shadow-lg">
         <div className="flex justify-between items-center text-white mb-6">
           <div>
@@ -107,7 +112,6 @@ const ClientDashboard = () => {
           </div>
         </div>
 
-        {/* Barra de Pesquisa */}
         <div className="bg-white rounded-xl shadow-lg p-2 flex items-center gap-2">
           <MapPin className="text-gray-400 ml-2" size={20} />
           <input 
@@ -123,10 +127,10 @@ const ClientDashboard = () => {
         </div>
       </div>
 
-      {/* --- CONTEÚDO PRINCIPAL --- */}
+      {/* Conteúdo */}
       <div className="px-4 -mt-6">
         
-        {/* Filtros de Categoria */}
+        {/* Filtros */}
         <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
           {categories.map((cat) => (
             <button 
@@ -151,19 +155,21 @@ const ClientDashboard = () => {
           </div>
 
           {filteredPros.map((pro) => (
-            <div key={pro.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+            <div 
+              key={pro.id} 
+              onClick={() => handleViewProfile(pro.id)} // <--- CLIQUE NO CARD INTEIRO
+              className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer"
+            >
               <div className="flex gap-4">
-                {/* Foto */}
                 <div className="relative">
                   <img src={pro.image} alt={pro.name} className="w-16 h-16 rounded-xl object-cover" />
                   {pro.verified && (
-                    <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-0.5" title="Verificado">
+                    <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-0.5">
                       <CheckCircle className="text-green-500 bg-white rounded-full" size={20} fill="white" />
                     </div>
                   )}
                 </div>
 
-                {/* Informações Centrais */}
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <h3 className="font-bold text-gray-800">{pro.name}</h3>
@@ -183,7 +189,6 @@ const ClientDashboard = () => {
 
               <hr className="my-3 border-gray-100" />
 
-              {/* Rodapé do Card */}
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-gray-400">A partir de</p>
@@ -194,21 +199,18 @@ const ClientDashboard = () => {
                 </div>
                 
                 <button 
-                  onClick={() => alert(`Iniciando chat com ${pro.name}...`)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Evita conflito de cliques
+                    handleViewProfile(pro.id);
+                  }}
                   className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-black transition"
                 >
                   <MessageSquare size={16} />
-                  Contatar
+                  Ver Perfil
                 </button>
               </div>
             </div>
           ))}
-
-          {filteredPros.length === 0 && (
-            <div className="text-center py-10 text-gray-400">
-              <p>Nenhum profissional encontrado nesta categoria.</p>
-            </div>
-          )}
         </div>
       </div>
     </div>
