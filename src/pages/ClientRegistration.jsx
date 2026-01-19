@@ -38,7 +38,7 @@ const ClientRegistration = () => {
       return;
     }
     alert("Cadastro de Cliente realizado com sucesso!");
-    navigate('/');
+    navigate('/dashboard');
   };
 
   return (

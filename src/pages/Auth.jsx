@@ -12,10 +12,13 @@ const Auth = () => {
   const btnColor = isClient ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700';
 
   // Função apenas para LOGIN
-  const handleLogin = (e) => {
+ const handleLogin = (e) => {
     e.preventDefault();
-    alert(`Entrando no sistema como ${roleTitle}...`);
-    navigate('/'); // Vai para a home
+    if (isClient) {
+        navigate('/dashboard'); // Cliente vai para o Dashboard de busca
+    } else {
+        alert("Painel do Autônomo em construção..."); 
+    }
   };
 
   // Função que direciona para as telas de cadastro completas
